@@ -1,5 +1,6 @@
 import { CalendarDays, Copy, ExternalLink, Heart, Search, Share2, Star } from "lucide-react";
 import { useMemo, useState } from "react";
+import type { CSSProperties } from "react";
 import { Link, NavLink, Route, Routes, useParams } from "react-router-dom";
 import { livers } from "./data/livers";
 import { useFavorites } from "./hooks/useFavorites";
@@ -237,7 +238,7 @@ function LiverDetail({ favorites }: { favorites: FavoriteState }) {
 
   return (
     <div className="page-grid">
-      <section className="detail-hero" style={{ borderColor: liver.color }}>
+      <section className="detail-hero color-panel" style={getLiverColorStyle(liver.color)}>
         <div>
           <p className="eyebrow">{liver.branch} / {liver.generationName}</p>
           <h1>{liver.displayName}</h1>
@@ -341,18 +342,19 @@ function SectionHeader({ title, description }: { title: string; description: str
 
 function AnniversaryCard({ event, favorites }: { event: DecoratedAnniversaryEvent; favorites: FavoriteState }) {
   return (
-    <article className="liver-card highlighted" style={{ borderColor: event.liver.color }}>
+    <article className="liver-card color-card highlighted" style={getLiverColorStyle(event.liver.color)}>
+      <Link
+        aria-label={`${event.liver.displayName}の詳細を見る`}
+        className="card-hit-area"
+        to={`/livers/${event.liver.id}`}
+      />
       <div className="card-title-row">
-        <span className="color-chip" style={{ background: event.liver.color }} />
         <h3>{event.liver.displayName}</h3>
         <FavoriteButton liver={event.liver} favorites={favorites} />
       </div>
       <p className="milestone-label">{event.label}</p>
       <p>今日で {formatNumber(event.dayNumber)}日目</p>
       <p>デビュー日: {formatDateJa(event.liver.debutDate)}</p>
-      <Link className="text-link" to={`/livers/${event.liver.id}`}>
-        詳細を見る
-      </Link>
     </article>
   );
 }
@@ -364,9 +366,9 @@ function LiverCard({ liver, favorites }: { liver: Liver; favorites: FavoriteStat
   const primaryEvent = getPrimaryEvent(todayEvents);
 
   return (
-    <article className="liver-card" style={{ borderColor: liver.color }}>
+    <article className="liver-card color-card" style={getLiverColorStyle(liver.color)}>
+      <Link aria-label={`${liver.displayName}の詳細を見る`} className="card-hit-area" to={`/livers/${liver.id}`} />
       <div className="card-title-row">
-        <span className="color-chip" style={{ background: liver.color }} />
         <h3>{liver.displayName}</h3>
         <FavoriteButton liver={liver} favorites={favorites} />
       </div>
@@ -375,9 +377,6 @@ function LiverCard({ liver, favorites }: { liver: Liver; favorites: FavoriteStat
       <p>今日で: {formatNumber(dayNumber)}日目</p>
       <p>{nextEvent ? `次: ${nextEvent.label}まであと${nextEvent.daysUntil}日` : "次の節目を計算中"}</p>
       <p className="muted">{liver.branch} / {formatStatus(liver.status)}</p>
-      <Link className="text-link" to={`/livers/${liver.id}`}>
-        詳細を見る
-      </Link>
     </article>
   );
 }
@@ -426,4 +425,81 @@ function formatStatus(status: Liver["status"]): string {
     default:
       return "公式掲載";
   }
+}
+
+function getLiverColorStyle(color: string): CSSProperties {
+  const luminance = getRelativeLuminance(color);
+  const blackContrast = (luminance + 0.05) / 0.05;
+  const whiteContrast = 1.05 / (luminance + 0.05);
+  const useDarkInk = blackContrast >= whiteContrast;
+  const ink = useDarkInk ? "#172026" : "#ffffff";
+  const mutedInk = useDarkInk ? "rgba(23, 32, 38, 0.72)" : "rgba(255, 255, 255, 0.82)";
+  const foldLight = useDarkInk ? "rgba(255, 255, 255, 0.42)" : "rgba(255, 255, 255, 0.22)";
+  const foldShade = useDarkInk ? "rgba(23, 32, 38, 0.08)" : "rgba(0, 0, 0, 0.16)";
+  const buttonSurface = useDarkInk ? "rgba(255, 255, 255, 0.72)" : "rgba(255, 255, 255, 0.2)";
+
+  return {
+    "--liver-color": color,
+    "--liver-ink": ink,
+    "--liver-muted-ink": mutedInk,
+    "--liver-fold-light": foldLight,
+    "--liver-fold-shade": foldShade,
+    "--liver-button-surface": buttonSurface
+  } as CSSProperties;
+}
+
+function getRelativeLuminance(color: string): number {
+  const rgb = parseColor(color);
+  if (!rgb) {
+    return 0.35;
+  }
+
+  const [red, green, blue] = rgb.map((channel) => {
+    const normalized = channel / 255;
+    return normalized <= 0.03928 ? normalized / 12.92 : ((normalized + 0.055) / 1.055) ** 2.4;
+  });
+
+  return 0.2126 * red + 0.7152 * green + 0.0722 * blue;
+}
+
+function parseColor(color: string): [number, number, number] | null {
+  const hex = color.trim().match(/^#?([a-f\d]{3}|[a-f\d]{6})$/i);
+  if (hex) {
+    const value =
+      hex[1].length === 3
+        ? hex[1]
+            .split("")
+            .map((char) => char + char)
+            .join("")
+        : hex[1];
+    return [0, 2, 4].map((start) => parseInt(value.slice(start, start + 2), 16)) as [number, number, number];
+  }
+
+  const hsl = color.trim().match(/^hsl\(\s*([\d.]+)\s+([\d.]+)%\s+([\d.]+)%\s*\)$/i);
+  if (hsl) {
+    return hslToRgb(Number(hsl[1]), Number(hsl[2]) / 100, Number(hsl[3]) / 100);
+  }
+
+  return null;
+}
+
+function hslToRgb(hue: number, saturation: number, lightness: number): [number, number, number] {
+  const chroma = (1 - Math.abs(2 * lightness - 1)) * saturation;
+  const segment = (hue % 360) / 60;
+  const x = chroma * (1 - Math.abs((segment % 2) - 1));
+  const [red1, green1, blue1] =
+    segment < 1
+      ? [chroma, x, 0]
+      : segment < 2
+        ? [x, chroma, 0]
+        : segment < 3
+          ? [0, chroma, x]
+          : segment < 4
+            ? [0, x, chroma]
+            : segment < 5
+              ? [x, 0, chroma]
+              : [chroma, 0, x];
+  const match = lightness - chroma / 2;
+
+  return [red1, green1, blue1].map((channel) => Math.round((channel + match) * 255)) as [number, number, number];
 }
