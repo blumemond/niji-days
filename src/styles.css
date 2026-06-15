@@ -413,7 +413,7 @@ main {
 
 .toolbar-band {
   display: grid;
-  grid-template-columns: minmax(220px, 1fr) repeat(3, minmax(130px, auto)) auto auto;
+  grid-template-columns: minmax(220px, 1fr) repeat(3, minmax(130px, auto)) auto;
   align-items: end;
   gap: 10px;
   padding: 14px;

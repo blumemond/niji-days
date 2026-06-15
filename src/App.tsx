@@ -116,7 +116,6 @@ function LiverList({ favorites }: { favorites: FavoriteState }) {
   const [direction, setDirection] = useState<SortDirection>("asc");
   const [branch, setBranch] = useState("all");
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
-  const [showGraduated, setShowGraduated] = useState(true);
 
   const branches = useMemo(() => ["all", ...Array.from(new Set(livers.map((liver) => liver.branch)))], []);
   const filteredLivers = useMemo(() => {
@@ -128,16 +127,15 @@ function LiverList({ favorites }: { favorites: FavoriteState }) {
           liver.displayName.toLowerCase().includes(normalizedQuery) ||
           liver.displayNameKana.toLowerCase().includes(normalizedQuery);
         const matchesBranch = branch === "all" || liver.branch === branch;
-        const matchesStatus = showGraduated || liver.status !== "graduated";
         const matchesFavorite = !showFavoritesOnly || favorites.isFavorite(liver.id);
 
-        return matchesQuery && matchesBranch && matchesStatus && matchesFavorite;
+        return matchesQuery && matchesBranch && matchesFavorite;
       }),
       sortKey,
       direction,
       TODAY
     );
-  }, [branch, direction, favorites, query, showFavoritesOnly, showGraduated, sortKey]);
+  }, [branch, direction, favorites, query, showFavoritesOnly, sortKey]);
 
   return (
     <div className="page-grid">
@@ -194,15 +192,6 @@ function LiverList({ favorites }: { favorites: FavoriteState }) {
             onChange={(event) => setShowFavoritesOnly(event.target.checked)}
           />
           推しのみ
-        </label>
-        <label className="check-field" htmlFor="show-graduated">
-          <input
-            id="show-graduated"
-            type="checkbox"
-            checked={showGraduated}
-            onChange={(event) => setShowGraduated(event.target.checked)}
-          />
-          卒業済みを表示
         </label>
       </section>
 
@@ -322,7 +311,7 @@ function About() {
           デビュー日は公式プロフィールのdebutAtをAsia/Tokyoの日付に変換しています。
         </p>
         <ul>
-          <li>公式画像・ロゴ・ライバー画像はMVPでは使用しません。</li>
+          <li>公式画像・ロゴ・ライバー画像は掲載していません。</li>
           <li>日付計算はAsia/Tokyoの日付単位で扱います。</li>
           <li>推し登録はブラウザのlocalStorageに保存されます。</li>
         </ul>

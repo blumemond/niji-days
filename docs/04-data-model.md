@@ -177,4 +177,4 @@ isSpecialMilestone = dayNumber in specialDayMilestones
 yearlyDate = debutDate plus N years
 ```
 
-2月29日デビューの扱いは実装時に明文化します。初期案では、うるう年でない年は2月28日を周年日として扱います。
+2月29日デビューの周年は、うるう年でない年は2月28日として扱います。
