@@ -144,6 +144,31 @@ if nextHundred == dayNumber:
   today is anniversary
 ```
 
+### キリ番日数
+
+3桁以上のキリ番日数は、計算ルールと設定値の両方で扱います。
+
+```text
+isHundredMilestone = dayNumber >= 100 and dayNumber % 100 == 0
+isRepeatingDigit = dayNumber >= 100 and all digits are the same
+isSpecialMilestone = dayNumber in specialDayMilestones
+```
+
+初期の特別キリ番:
+
+```json
+{
+  "specialDayMilestones": [2434]
+}
+```
+
+表示ラベル例:
+
+- `300日記念`
+- `333日記念`
+- `1,000日記念`
+- `2,434日記念`
+
 ### 周年
 
 周年は日数ではなく暦日で扱います。
@@ -153,4 +178,3 @@ yearlyDate = debutDate plus N years
 ```
 
 2月29日デビューの扱いは実装時に明文化します。初期案では、うるう年でない年は2月28日を周年日として扱います。
-
