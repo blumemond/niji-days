@@ -324,6 +324,12 @@ main {
   cursor: pointer;
 }
 
+.icon-button.with-label {
+  width: auto;
+  min-width: max-content;
+  white-space: nowrap;
+}
+
 .color-card .icon-button,
 .color-panel .icon-button {
   position: relative;
