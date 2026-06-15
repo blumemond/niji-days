@@ -383,7 +383,7 @@ function LiverCard({ liver, favorites }: { liver: Liver; favorites: FavoriteStat
 
 function EventRow({ event }: { event: DecoratedAnniversaryEvent }) {
   return (
-    <Link className="event-row" to={`/livers/${event.liver.id}`}>
+    <Link className="event-row color-event" style={getLiverColorStyle(event.liver.color)} to={`/livers/${event.liver.id}`}>
       <span className="event-date">{formatDateJa(event.date)}</span>
       <span>{event.liver.displayName}</span>
       <strong>{event.label}</strong>
