@@ -27,6 +27,7 @@
 - [データ設計](./docs/04-data-model.md)
 - [運用・権利・データ方針](./docs/05-operations-and-compliance.md)
 - [MVPロードマップ](./docs/06-roadmap.md)
+- [開発スケジュール・レビュー・WBS](./docs/07-development-plan-and-wbs.md)
 
 ## MVPの最小構成
 
@@ -46,3 +47,16 @@
 - 公式画像・ロゴ・ライバー画像の利用は慎重に扱い、MVPでは原則として名前・色・公式リンク中心のUIにします。
 - 公開前にANYCOLOR公式の最新ガイドラインを再確認します。
 
+## 開発
+
+```bash
+npm install
+npm run dev
+```
+
+品質確認:
+
+```bash
+npm run test
+npm run build
+```
