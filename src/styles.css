@@ -327,10 +327,29 @@ main {
 }
 
 .pill-row,
-.action-row {
+.action-row,
+.link-list {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+}
+
+.external-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #cfd8dc;
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: #ffffff;
+  color: #172026;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.external-link svg {
+  width: 16px;
+  height: 16px;
 }
 
 .milestone-pill {

@@ -22,6 +22,10 @@ export function sortLivers(
 function compareLivers(a: Liver, b: Liver, sortKey: SortKey, today: string): number {
   switch (sortKey) {
     case "kana":
+      if (a.sortOrderRuby !== undefined && b.sortOrderRuby !== undefined) {
+        return a.sortOrderRuby - b.sortOrderRuby;
+      }
+
       return a.displayNameKana.localeCompare(b.displayNameKana, "ja");
     case "debutDate":
       return a.debutDate.localeCompare(b.debutDate);

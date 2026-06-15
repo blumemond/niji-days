@@ -62,7 +62,7 @@ function Home({ favorites }: { favorites: FavoriteState }) {
           <p className="eyebrow">今日 {formatDateJa(TODAY)}</p>
           <h1>推しの今日と、もうすぐ祝える日。</h1>
           <p>
-            デビューからの活動日数、キリ番、周年をまとめて確認できます。現在はMVP開発用のサンプルデータです。
+            デビューからの活動日数、キリ番、周年をまとめて確認できます。データは公式プロフィール由来です。
           </p>
         </div>
         <Link className="primary-link" to="/livers">
@@ -286,8 +286,22 @@ function LiverDetail({ favorites }: { favorites: FavoriteState }) {
       </section>
 
       <section className="section-block">
+        <SectionHeader title="公式リンク" description="公式プロフィールから取得したリンクです。" />
+        <div className="link-list">
+          {liver.links.map((link) => (
+            <a className="external-link" href={link.url} key={`${link.type}-${link.url}`} target="_blank" rel="noreferrer">
+              <ExternalLink aria-hidden="true" />
+              {link.label}
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <section className="section-block">
         <SectionHeader title="データ根拠" description={liver.sourceNote} />
-        <p className="muted">本MVPではサンプルデータを使用しています。実データ整備時に公式情報を確認します。</p>
+        <p className="muted">
+          公式プロフィールのdebutAtをAsia/Tokyoの日付に変換しています。活動状態は公式サイト掲載情報のみでは断定しません。
+        </p>
       </section>
     </div>
   );
@@ -303,8 +317,8 @@ function About() {
           公式・運営会社とは関係ありません。
         </p>
         <p>
-          MVPでは初配信日をデビュー日として扱う前提で設計しています。現在のアプリ内データは開発用サンプルです。
-          実データを公開する前に、公式情報とガイドラインを確認します。
+          現在のアプリ内データは、にじさんじ公式サイトのタレント一覧と各タレント詳細ページから取得しています。
+          デビュー日は公式プロフィールのdebutAtをAsia/Tokyoの日付に変換しています。
         </p>
         <ul>
           <li>公式画像・ロゴ・ライバー画像はMVPでは使用しません。</li>
@@ -360,7 +374,7 @@ function LiverCard({ liver, favorites }: { liver: Liver; favorites: FavoriteStat
       <p>デビュー日: {formatDateJa(liver.debutDate)}</p>
       <p>今日で: {formatNumber(dayNumber)}日目</p>
       <p>{nextEvent ? `次: ${nextEvent.label}まであと${nextEvent.daysUntil}日` : "次の節目を計算中"}</p>
-      <p className="muted">{liver.branch} / {liver.status === "graduated" ? "卒業済み" : "活動中"}</p>
+      <p className="muted">{liver.branch} / {formatStatus(liver.status)}</p>
       <Link className="text-link" to={`/livers/${liver.id}`}>
         詳細を見る
       </Link>
@@ -397,4 +411,19 @@ function FavoriteButton({ liver, favorites }: { liver: Liver; favorites: Favorit
 
 function EmptyState({ text }: { text: string }) {
   return <p className="empty-state">{text}</p>;
+}
+
+function formatStatus(status: Liver["status"]): string {
+  switch (status) {
+    case "active":
+      return "活動中";
+    case "graduated":
+      return "卒業済み";
+    case "paused":
+      return "活動休止中";
+    case "listed":
+      return "公式掲載";
+    default:
+      return "公式掲載";
+  }
 }

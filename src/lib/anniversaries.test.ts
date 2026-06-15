@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { livers } from "../data/livers";
+import type { Liver } from "../types";
 import { addYears } from "./date";
 import { calculateDayNumber, getEventsOnDate, getUpcomingAnniversaries } from "./anniversaries";
 
@@ -11,14 +11,14 @@ describe("anniversary calculations", () => {
   });
 
   it("detects hundred, repeating, thousand, and special milestones", () => {
-    expect(getEventsOnDate(livers[0], today).map((event) => event.label)).toContain("300日記念");
-    expect(getEventsOnDate(livers[1], today).map((event) => event.label)).toContain("333日記念");
-    expect(getEventsOnDate(livers[2], today).map((event) => event.label)).toContain("1,000日記念");
-    expect(getEventsOnDate(livers[3], today).map((event) => event.label)).toContain("2,434日記念");
+    expect(getEventsOnDate(createLiver("2025-08-20"), today).map((event) => event.label)).toContain("300日記念");
+    expect(getEventsOnDate(createLiver("2025-07-18"), today).map((event) => event.label)).toContain("333日記念");
+    expect(getEventsOnDate(createLiver("2023-09-20"), today).map((event) => event.label)).toContain("1,000日記念");
+    expect(getEventsOnDate(createLiver("2019-10-17"), today).map((event) => event.label)).toContain("2,434日記念");
   });
 
   it("returns upcoming events in date order", () => {
-    const events = getUpcomingAnniversaries(livers, today, 30);
+    const events = getUpcomingAnniversaries([createLiver("2021-01-15")], today, 30);
     expect(events.length).toBeGreaterThan(0);
     expect(events[0].daysUntil).toBeGreaterThanOrEqual(0);
   });
@@ -27,3 +27,18 @@ describe("anniversary calculations", () => {
     expect(addYears("2024-02-29", 1)).toBe("2025-02-28");
   });
 });
+
+function createLiver(debutDate: string): Liver {
+  return {
+    id: `test-${debutDate}`,
+    displayName: "テスト",
+    displayNameKana: "てすと",
+    debutDate,
+    debutDateBasis: "test",
+    branch: "JP",
+    status: "active",
+    color: "#13a38b",
+    sourceNote: "test",
+    links: []
+  };
+}

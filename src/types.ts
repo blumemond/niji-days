@@ -1,7 +1,7 @@
-export type LiverStatus = "active" | "graduated" | "paused";
+export type LiverStatus = "active" | "graduated" | "paused" | "listed";
 
 export interface LiverLink {
-  type: "official" | "youtube" | "x";
+  type: "official" | "youtube" | "x" | "fanclub" | "officialShop" | "officialStoreEn" | "magazine";
   label: string;
   url: string;
 }
@@ -10,6 +10,8 @@ export interface Liver {
   id: string;
   displayName: string;
   displayNameKana: string;
+  sortOrderRuby?: number;
+  sortOrderEnName?: number;
   debutDate: string;
   debutDateBasis: string;
   branch: string;
